@@ -1,0 +1,269 @@
+参考资料：https://blog.csdn.net/Javachichi/article/details/131677550
+
+1、kotlin编译原理是先编译为class文件，再在java 虚拟机上执行
+
+2、变量
+var = 1 变量
+val = 2 常量
+kotlin存在类型推导机制
+var c:Int = 1
+
+kotlin不存在基本类型，将全部使用对象类型
+
+3、函数
+fun test(){}
+
+fun add(a:Int,b Int):Int{
+	return a+b;
+}
+由于存在类型推导，所以：
+fun add(a:Int,b:Int) = a+b
+
+函数的调用
+fun main(){
+	test()
+	println(add(1,2))
+}
+
+4、选择语句
+if when:
+	fun max(int:a,int b):Int{
+		if(a>b) return a
+		else return b
+	}
+	
+
+	kotlin的if可以包含返回值， if语句的最后一行会作为返回值返回
+	fun max(a:Int,b Int):Int{
+		return if(a>b) a else b;
+	}
+
+	kotlin的if必须有else,否则会报错
+	fun getScore(name:String) = if(name=="Tom") "不及格"
+	else if(name == "Jim") "良好"
+	else if(name == "Fiona") "优秀"
+	else "名字非法"
+
+	Kotlin中的== 是Java中的equal,比较的是 内容
+	Kotlin中的===是Java中的==,比较的是引用
+
+	when的实现也必须要有else，否则会报错
+	fun getScore(name:String):String = when(name){
+		"Tom"->"不及格"
+		"Jim"->"及格"
+		"Fiona"->"优秀"
+		else->"名字非法"
+	}
+
+	when支持参数检查
+	fun checkNumber(num:Number){
+		when(nun){
+			is Int->println("Int")
+			is Double->println("double")
+			else println("others")
+		}
+	}
+	when 可以不传递参数
+	fun getScore(name:String) = when{
+		name == "Tom" ->"不及格"
+		name == "Jim" ->"及格"
+		name == "Tony"->"良好"
+		name == "Fiona"->"优秀"
+		else ->"名字非法"
+	}
+
+	fun getSore(name:String) = when{
+		//若name以Tom开头则命中此分支
+		
+	}
+
+5、循环语句
+when和Java差不多      for-in是对Java for-each的加强
+val range = 0..10
+双闭区间
+fun main(){
+	var range = 0..10
+	for(i in range){
+		println(i)
+	}
+}
+
+左闭右开
+fun main(){
+	var range = 0..10
+	for(i in 0 until 10){
+		println(i)
+	}
+}
+
+跳步
+fun main(){
+	var range = 0..10
+	for(i in 0 until 10 step 2){
+		println(i)
+	}
+}
+
+降序
+fun main(){
+	var range = 0..10
+	for(i in 10 downTo 1){
+		println(i)
+	}
+}
+
+6、类和对象的初始化
+class Person{
+	var name = ""
+	var age = 0
+	fun printInfo(){
+		println(name+"'s age is "+name)
+	}
+}
+
+使用person类
+fun main(){
+	Person p1 = Person()
+	p1.name = "Finoa"
+	p1.age = 12
+	p1.printInfo()
+}
+
+继承
+class Student : Person{
+	var grade = ""
+	var name = ""
+	var age = 0
+	fun study(score:Int):Int{
+		println("score is "+score)
+		return score
+	}
+}
+
+final修饰的类不可以被继承、需要使用open关键字修饰
+open class Person{
+	...
+}
+
+构造 
+主构造
+class Student(var name:String,var age:Int) :Person{
+
+}
+open class Person(var name:String,var age:Int){
+
+}
+继承有参构造的类
+class Student(var name:String,var age:Int,var score:String):Person(name,age){
+...
+}
+
+次构造
+无参构造，字符串默认为"",Int默认为0
+class Student(name:String,age:Int,score:String,grade:Int):Person(name,age){
+	constructor(name:String,age:Int,score:String):this(name,age,score,0)
+	constructor():this("",0,"",0){
+
+	}
+}
+fun main(){
+	Student s1 = Student("Jimmy",10,"88",1)
+	Student s2 = Student("Fiona",18,"98")
+	Student s3 = Student()
+}
+
+无主构造
+如类不使用主构造，则后续继承类也不需要使用构造即可去掉继承类的（）,次构造可以调用父类构造super进行初始化，但是次构造的参数在其他地方无法引用
+class Student:Person{
+	constructor(name:String,age:Int,number:String):super(name,age){
+		
+	}
+	fun study(){
+		println(name,age)
+		println(number)报错，若number是主构造的参数则可引用
+	}
+}
+
+7、接口
+interface Study{
+	fun study()
+	fun readBooks()
+	fun doHomework()
+}
+继承接口只需使用,进行拼接，并需要实现接口的所有函数
+class Student(name:String,age:Int,grade:string):Person(name,age),study{
+	override fun study()
+}
+kotlin支持接口方法的默认实现，则继承类无需必现实现此方法
+
+8、数据类和单例类
+数据类只处理和数据相关的，如get、set、hashCode、equals、toString
+
+9、Lambda
+集合的创建和遍历
+list：
+fun main(){
+	val list = ArrayList<Int>()
+	list.add(1)
+	list.add(2)
+	list.add(3)
+
+	val list1 = listOf<Int>(1,2,3,4,5)
+	list1.add(6)//listOf不可变，只可查
+}
+
+map：
+fun main(){
+	可变
+	val map = HashMap<String,String>()
+	map.put("1","Jimmy")
+	map["2"] = Tommy
+	println(map.get("1"))
+	println(map["2"])
+	不可变
+	val map1 = mapOf<String,String>("3" to "Fiona","4" to "whilt")
+	可变
+	val map2 = mutableMapOf<String,String>("5" to "Kevin",6 to "Dabby")
+
+	遍历
+	for((key,value) in map){
+		println("key is  "+key +" value is "+value)
+	}
+}
+
+lambda可以传递代码
+参数名1：参数类型，参数名2：参数类型->函数体
+fun main(){
+	val list = listOf<String>("a","aba","aabb","a")
+	var maxStr = ""
+	for(str in list){
+		if(str.length>maxStr.length) maxStr=str
+	}
+	println("max is "+maxStr)
+}
+
+
+kotlin把空指针异常检查提前到了编译期，若空指针则会报错
+java的做法
+public void Student(Study study){
+	if(study==null){
+		return;
+	}
+	study.doHomework()
+	study.doExtrawork()
+}
+kotlin的做法
+fun Student(study:Study){
+	study.doHomework()
+	study.doExtraWork()
+}
+
+fun main(){
+	Student s1 = Student(null)//kotlin这么写会报错
+	Student s2 = Student(Study())//ok
+}
+
+?的意思是当前参数可为空，如果可为空的话，则此对象调用的方法必须要保证不为空，说白了如果使用？就表示参数对象可为空，因此就不要调参数对象的方法了，毕竟这个对象都可能为空
+
+
+
